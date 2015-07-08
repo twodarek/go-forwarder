@@ -35,12 +35,6 @@ class MainPage(webapp2.RequestHandler):
   def get(self):
     self.response.out.write('<html><body>')
 
-    redirects = ndb.gql('SELECT * '
-                        'FROM Redirect_Url')
-
-    for redirect in redirects:
-        self.response.out.write(redirect)
-
     self.response.out.write("""
           <form action="/new" method="post">
             <div>
