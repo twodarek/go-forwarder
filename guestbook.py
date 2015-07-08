@@ -78,8 +78,11 @@ class Redirector(webapp2.RequestHandler):
     input_url = kwargs['furtherURL']
     url_parts = input_url.split('/?#')
     logging.info(url_parts)
-    to_url = Redirect_Url.query(Redirect_Url.input_url == url_parts[0]).get().to_url
-    self.redirect(to_url.encode('ascii','ignore'))
+    to_url = Redirect_Url.query(Redirect_Url.input_url == url_parts[0]).get()
+    try:
+        self.redirect(to_url.to_url.encode('ascii','ignore'))
+    except AttributeError:
+        self.redirect('/')
 
 
 app = webapp2.WSGIApplication([
