@@ -16,42 +16,42 @@
 #
 import cgi
 import datetime
+import logging
 import webapp2
 
 from google.appengine.ext import ndb
 from google.appengine.api import users
 
-guestbook_key = ndb.Key('Guestbook', 'default_guestbook')
+redirect_key = ndb.Key('Go Redirector', 'default_redirector')
 
-class Greeting(ndb.Model):
-  author = ndb.UserProperty()
-  content = ndb.TextProperty()
-  date = ndb.DateTimeProperty(auto_now_add=True)
+
+class Redirect_Url(ndb.Model):
+  user = ndb.UserProperty()
+  to_url = ndb.TextProperty(required=True, indexed=True)
+  input_url = ndb.TextProperty(required=True, indexed=True)
 
 
 class MainPage(webapp2.RequestHandler):
   def get(self):
     self.response.out.write('<html><body>')
 
-    greetings = ndb.gql('SELECT * '
-                        'FROM Greeting '
-                        'WHERE ANCESTOR IS :1 '
-                        'ORDER BY date DESC LIMIT 10',
-                        guestbook_key)
+    redirects = ndb.gql('SELECT * '
+                        'FROM Redirect_Url')
 
-    for greeting in greetings:
-      if greeting.author:
-        self.response.out.write('<b>%s</b> wrote:' % greeting.author.nickname())
-      else:
-        self.response.out.write('An anonymous person wrote:')
-      self.response.out.write('<blockquote>%s</blockquote>' %
-                              cgi.escape(greeting.content))
-
+    for redirect in redirects:
+        self.response.out.write(redirect)
 
     self.response.out.write("""
-          <form action="/sign" method="post">
-            <div><textarea name="content" rows="3" cols="60"></textarea></div>
-            <div><input type="submit" value="Sign Guestbook"></div>
+          <form action="/new" method="post">
+            <div>
+                <label for="input_url">Input Url</label>
+                <textarea name="input_url" rows="1" cols="60"></textarea>
+            </div>
+            <div>
+                <label for="to_url">To URL</label>
+                <textarea name="to_url" rows="1" cols="60"></textarea>
+            </div>
+            <div><input type="submit" value="Add new redirect"></div>
           </form>
         </body>
       </html>""")
@@ -59,17 +59,32 @@ class MainPage(webapp2.RequestHandler):
 
 class GoLink(webapp2.RequestHandler):
   def post(self):
-    greeting = Greeting(parent=guestbook_key)
+    url = Redirect_Url(parent=redirect_key)
 
     if users.get_current_user():
-      greeting.author = users.get_current_user()
+      url.user = users.get_current_user()
+    
+    url.to_url = self.request.get('to_url').encode('ascii','ignore')
+    url.input_url = self.request.get('input_url').encode('ascii','ignore')
 
-    greeting.content = self.request.get('content')
-    greeting.put()
+    url.put()
     self.redirect('/')
+
+class Redirector(webapp2.RequestHandler):
+  def get(self, *args, **kwargs):
+    r = Redirect_Url.query(Redirect_Url.input_url == u'test').get().to_url
+    logging.info(r)
+
+    input_url = kwargs['furtherURL']
+    url_parts = input_url.split('/?#')
+    logging.info(url_parts)
+    to_url = Redirect_Url.query(Redirect_Url.input_url == url_parts[0]).get().to_url
+    self.redirect(to_url.encode('ascii','ignore'))
 
 
 app = webapp2.WSGIApplication([
   ('/', MainPage),
-  ('/new', GoLink)
+  ('/new', GoLink),
+  ('/*', Redirector),
+  webapp2.Route('/<furtherURL>', handler=Redirector)
 ], debug=True)
