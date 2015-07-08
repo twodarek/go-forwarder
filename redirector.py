@@ -72,15 +72,20 @@ class GoLink(webapp2.RequestHandler):
 
 class Redirector(webapp2.RequestHandler):
   def get(self, *args, **kwargs):
-    r = Redirect_Url.query(Redirect_Url.input_url == u'test').get().to_url
-    logging.info(r)
+    logging.info(args)
+    logging.info(kwargs)
 
     input_url = kwargs['furtherURL']
     url_parts = input_url.split('/?#')
     logging.info(url_parts)
     to_url = Redirect_Url.query(Redirect_Url.input_url == url_parts[0]).get()
+    
     try:
-        self.redirect(to_url.to_url.encode('ascii','ignore'))
+        to_url = to_url.to_url.encode('ascii','ignore')
+        for item in url_parts[1:]:
+            to_url = to_url + str(item)
+        logging.info("URL: " + str(to_url))
+        self.redirect(to_url)
     except AttributeError:
         self.redirect('/')
 
