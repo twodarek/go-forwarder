@@ -38,11 +38,11 @@ class MainPage(webapp2.RequestHandler):
     self.response.out.write("""
           <form action="/new" method="post">
             <div>
-                <label for="input_url">Input Url</label>
+                <label for="input_url">Input Url (ie: 'test' for 'http://go/test')</label>
                 <textarea name="input_url" rows="1" cols="60"></textarea>
             </div>
             <div>
-                <label for="to_url">To URL</label>
+                <label for="to_url">To URL (ie: 'http://google.com'></label>
                 <textarea name="to_url" rows="1" cols="60"></textarea>
             </div>
             <div><input type="submit" value="Add new redirect"></div>
@@ -66,9 +66,6 @@ class GoLink(webapp2.RequestHandler):
 
 class Redirector(webapp2.RequestHandler):
   def get(self, *args, **kwargs):
-    r = Redirect_Url.query(Redirect_Url.input_url == u'test').get().to_url
-    logging.info(r)
-
     input_url = kwargs['furtherURL']
     url_parts = input_url.split('/?#')
     logging.info(url_parts)
