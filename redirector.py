@@ -42,7 +42,7 @@ class MainPage(webapp2.RequestHandler):
                 <textarea name="input_url" rows="1" cols="60"></textarea>
             </div>
             <div>
-                <label for="to_url">To URL (ie: 'http://google.com'></label>
+                <label for="to_url">To URL (ie: 'http://google.com')</label>
                 <textarea name="to_url" rows="1" cols="60"></textarea>
             </div>
             <div><input type="submit" value="Add new redirect"></div>
