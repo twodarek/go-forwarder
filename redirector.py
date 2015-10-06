@@ -39,14 +39,25 @@ class MainPage(webapp2.RequestHandler):
           <form action="/new" method="post">
             <div>
                 <label for="input_url">Input Url (ie: 'test' for 'http://go/test')</label>
-                <textarea name="input_url" rows="1" cols="60"></textarea>
+                <textarea id="input_url" name="input_url" rows="1" cols="60"></textarea>
             </div>
             <div>
                 <label for="to_url">To URL (ie: 'http://google.com')</label>
-                <textarea name="to_url" rows="1" cols="60"></textarea>
+                <textarea id="to_url" name="to_url" rows="1" cols="60"></textarea>
             </div>
             <div><input type="submit" value="Add new redirect"></div>
           </form>
+            <script type="text/javascript">
+
+            function getParameterByName(name) {
+               name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+               var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+               results = regex.exec(location.search);
+               return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+            }
+
+            document.getElementById('input_url').value = getParameterByName('input_url');
+            </script>
         </body>
       </html>""")
 
@@ -73,7 +84,7 @@ class Redirector(webapp2.RequestHandler):
     try:
         self.redirect(to_url.to_url.encode('ascii','ignore'))
     except AttributeError:
-        self.redirect('/')
+        self.redirect('/?input_url=' + url_parts[0])
 
 
 app = webapp2.WSGIApplication([
