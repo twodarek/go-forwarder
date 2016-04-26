@@ -4,7 +4,14 @@ runtime: python27
 api_version: 1
 threadsafe: yes
 
+builtins:
+- deferred: on
+
 handlers:
+- url: /update_schema
+  script: update_schema_handler.app  # path to webapp2 application definition.
+  login: admin
+  secure: always
 - url: .*
   script: redirector.app
 

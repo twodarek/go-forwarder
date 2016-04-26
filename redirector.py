@@ -17,19 +17,13 @@
 import cgi
 import datetime
 import logging
+import models
 import webapp2
 
 from google.appengine.ext import ndb
 from google.appengine.api import users
 
 redirect_key = ndb.Key('Go Redirector', 'default_redirector')
-
-
-class Redirect_Url(ndb.Model):
-  user = ndb.UserProperty()
-  to_url = ndb.TextProperty(required=True, indexed=True)
-  input_url = ndb.TextProperty(required=True, indexed=True)
-  input_url_lower = ndb.ComputedProperty(lambda self: self.input_url.lower())
 
 
 class MainPage(webapp2.RequestHandler):
@@ -65,7 +59,7 @@ class MainPage(webapp2.RequestHandler):
 
 class GoLink(webapp2.RequestHandler):
   def post(self):
-    url = Redirect_Url(parent=redirect_key)
+    url = models.Redirect_Url(parent=redirect_key)
 
     if users.get_current_user():
       url.user = users.get_current_user()
@@ -81,7 +75,7 @@ class Redirector(webapp2.RequestHandler):
     input_url = kwargs['furtherURL']
     url_parts = input_url.split('/?#')
     logging.info(url_parts)
-    to_url = Redirect_Url.query(Redirect_Url.input_url_lower == url_parts[0].lower()).get()
+    to_url = models.Redirect_Url.query(models.Redirect_Url.input_url_lower == url_parts[0].lower()).get()
     try:
         self.redirect(to_url.to_url.encode('ascii','ignore'))
     except AttributeError:
