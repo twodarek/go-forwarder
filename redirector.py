@@ -29,6 +29,7 @@ class Redirect_Url(ndb.Model):
   user = ndb.UserProperty()
   to_url = ndb.TextProperty(required=True, indexed=True)
   input_url = ndb.TextProperty(required=True, indexed=True)
+  input_url_lower = ndb.ComputedProperty(lambda self: self.input_url.lower())
 
 
 class MainPage(webapp2.RequestHandler):
@@ -80,7 +81,7 @@ class Redirector(webapp2.RequestHandler):
     input_url = kwargs['furtherURL']
     url_parts = input_url.split('/?#')
     logging.info(url_parts)
-    to_url = Redirect_Url.query(Redirect_Url.input_url == url_parts[0]).get()
+    to_url = Redirect_Url.query(Redirect_Url.input_url_lower == url_parts[0].lower()).get()
     try:
         self.redirect(to_url.to_url.encode('ascii','ignore'))
     except AttributeError:
