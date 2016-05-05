@@ -8,3 +8,9 @@ class Redirect_Url(ndb.Model):
   input_url = ndb.TextProperty(required=True, indexed=True)
   input_url_lower = ndb.ComputedProperty(lambda self: self.input_url.lower())
 
+class Authorized_User(ndb.Model):
+  user = ndb.UserProperty()
+  auth_admin = ndb.BooleanProperty(required=True)
+  auth_view = ndb.BooleanProperty(required=True)
+  auth_write = ndb.BooleanProperty(required=True)
+

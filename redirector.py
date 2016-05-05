@@ -22,6 +22,9 @@ import webapp2
 
 from google.appengine.ext import ndb
 from google.appengine.api import users
+from google.appengine.api.users import User
+
+from permissions import Permissions as Perms
 
 redirect_key = ndb.Key('Go Redirector', 'default_redirector')
 
@@ -59,10 +62,13 @@ class MainPage(webapp2.RequestHandler):
 
 class GoLink(webapp2.RequestHandler):
   def post(self):
+    if(not Perms.canWriteOrAdmin(users.get_current_user())):
+        self.abort(401)
+
     url = models.Redirect_Url(parent=redirect_key)
 
     if users.get_current_user():
-      url.user = users.get_current_user()
+      url.user = users.User.email(users.get_current_user())
     
     url.to_url = self.request.get('to_url').encode('ascii','ignore')
     url.input_url = self.request.get('input_url').encode('ascii','ignore')
@@ -72,6 +78,10 @@ class GoLink(webapp2.RequestHandler):
 
 class Redirector(webapp2.RequestHandler):
   def get(self, *args, **kwargs):
+    logging.info(User.email(users.get_current_user()))
+    if(not Perms.canAny(users.get_current_user())):
+        self.abort(401)
+
     input_url = kwargs['furtherURL']
     url_parts = input_url.split('/?#')
     logging.info(url_parts)
