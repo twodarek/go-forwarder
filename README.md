@@ -6,9 +6,9 @@
 
 This repo is the holding location for my little forwarder tool I run in GAE (Google App Engine).
 
-* Why a forwarder?
-** I'm lazy
-* Why GAE?
-** See above
+1. Why a forwarder?
+  * I'm lazy
+2.  Why GAE?
+  * See above
 
 Enjoy!
