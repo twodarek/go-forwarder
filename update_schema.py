@@ -20,7 +20,7 @@ def UpdateSchema(cursor=None, num_updated=0):
         logging.debug(
             'Put %d entities to Datastore for a total of %d',
             num_updated, num_updated)
-        
+
         #deferred.defer(
         #    UpdateSchema, cursor=p[-2], num_updated=num_updated)
     else:
