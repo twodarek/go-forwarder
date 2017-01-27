@@ -23,13 +23,8 @@ class GoLink(webapp2.RequestHandler):
     url.to_url = self.request.get('to_url').encode('ascii','ignore')
     url.input_url = self.request.get('input_url').encode('ascii','ignore')
 
-<<<<<<< HEAD
-    if user and user.email() == 'KC8ZPQ@gmail.com':
-=======
-    # if user and user.email() == 'KC8ZPQ@gmail.com':
     check = users.is_current_user_admin()
     if user and users.is_current_user_admin():
->>>>>>> 71ccc28... Make auth work
       url.put()
       self.redirect('/')
     elif user:
@@ -43,10 +38,10 @@ class GoLink(webapp2.RequestHandler):
       self.response.write("You are not authorised to perform this action")
       self.response.set_status(403)
 
-<<<<<<< HEAD
-=======
+    url.put()
+    self.redirect('/')
+
 
 app = webapp2.WSGIApplication([
   ('/new', GoLink)
 ], debug=True)
->>>>>>> 71ccc28... Make auth work
