@@ -1,8 +1,8 @@
-application: kc8zpq-dev01
-version: 1
+#application: kc8zpq-dev01
+#version: 1
 runtime: python27
 api_version: 1
-threadsafe: yes
+threadsafe: false
 
 builtins:
 - deferred: on
@@ -14,6 +14,8 @@ handlers:
   secure: always
 - url: .*
   script: redirector.app
+  login: required
+  secure: always
 
 libraries:
 - name: webapp2
