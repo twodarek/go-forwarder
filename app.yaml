@@ -8,14 +8,14 @@ builtins:
 - deferred: on
 
 handlers:
-- url: /update_schema
-  script: update_schema_handler.app  # path to webapp2 application definition.
-  login: admin
-  secure: always
+# - url: /update_schema
+#   script: update_schema_handler.app  # path to webapp2 application definition.
+#   login: admin
+#   secure: always
 - url: .*
   script: redirector.app
-  login: required
-  secure: always
+  # login: required
+  # secure: always
 
 libraries:
 - name: webapp2
