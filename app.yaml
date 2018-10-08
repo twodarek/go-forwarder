@@ -8,10 +8,6 @@ builtins:
 - deferred: on
 
 handlers:
-- url: /new
-  script: golink.app
-  login: required
-  secure: always
 - url: .*
   script: redirector.app
 
