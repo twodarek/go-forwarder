@@ -8,10 +8,6 @@ builtins:
 - deferred: on
 
 handlers:
-# - url: /update_schema
-#   script: update_schema_handler.app  # path to webapp2 application definition.
-#   login: admin
-#   secure: always
 - url: /new
   script: golink.app
   login: required
